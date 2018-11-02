@@ -1,1 +1,6 @@
-blabla.txt
+[Header Section]
+data=trucmuche
+ImageResolution=560x560
+
+[Data Section]
+7.36e13 7.3625e14
