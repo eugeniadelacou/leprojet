@@ -4,3 +4,8 @@ ImageResolution=560x560
 
 [Data Section]
 7.36e13 7.3625e14
+
+git status
+git add
+git commit
+git push

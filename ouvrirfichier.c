@@ -81,11 +81,7 @@ int lirefichier(char* filename)
       {
       printf("Bienvenue dans le monde de la Data Section\n");
       }
-      else
-      {
-          printf("erreur en lisant la partie Data\n");
-          break;
-      }
+      
     }
 
       while (flag != NULL); // on continue tant que fgets n'a pas retourné EOF
