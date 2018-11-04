@@ -14,7 +14,6 @@ float* creermatrice()
 
 int lirefichier(char* filename)
 {
-
   FILE* fichier = NULL;
   char ligneactuelle[150];
   char ligneactuelle_copie[150];
@@ -23,6 +22,9 @@ int lirefichier(char* filename)
   char* size = 0;
   //char size_copie[150];
   int size_val = 0;
+  int matrice[150];
+  char* pixel =0;
+  double pixel_val=0;
 
   fichier = fopen(filename, "r");
 
@@ -65,6 +67,9 @@ int lirefichier(char* filename)
                   printf("%s\n", size);
                   size_val = atoi(size);
                   printf("\nla valeur de la taille est %d !\n", size_val);
+
+                  /*on cree la matrice ici ?*/
+                  int matrice[size_val][size_val];
                 }
               }
               else
@@ -81,7 +86,15 @@ int lirefichier(char* filename)
       {
       printf("Bienvenue dans le monde de la Data Section\n");
       }
-      
+        do
+        {
+          strcpy(ligneactuelle_copie, ligneactuelle);
+          pixel = strtok(ligneactuelle_copie, " ");
+          pixel_val = atof(pixel);
+          printf("pixel_val vaut %f !\n", pixel_val);
+        }
+        while(strtok(NULL, " ") != NULL);
+
     }
 
       while (flag != NULL); // on continue tant que fgets n'a pas retourné EOF
