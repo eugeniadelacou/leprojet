@@ -20,7 +20,6 @@ int lirefichier(char* filename)
   char* flag = 0;
   char* flag2 = 0;
   char* size = 0;
-  //char size_copie[150];
   int size_val = 0;
   int matrice[150];
   char* pixel =0;
@@ -84,17 +83,19 @@ int lirefichier(char* filename)
       }
       if (!strcmp (ligneactuelle, "[Data Section]\n"))
       {
-      printf("Bienvenue dans le monde de la Data Section\n");
-      }
+        printf("Bienvenue dans le monde de la Data Section\n");
+
+        fgets(ligneactuelle, 50, fichier);
+        strcpy(ligneactuelle_copie, ligneactuelle);
+        pixel = strtok(ligneactuelle_copie, " ");
         do
         {
-          strcpy(ligneactuelle_copie, ligneactuelle);
-          pixel = strtok(ligneactuelle_copie, " ");
           pixel_val = atof(pixel);
           printf("pixel_val vaut %f !\n", pixel_val);
+          pixel = strtok(NULL, " ");
         }
-        while(strtok(NULL, " ") != NULL);
-
+        while(pixel != NULL);
+      }
     }
 
       while (flag != NULL); // on continue tant que fgets n'a pas retourné EOF
