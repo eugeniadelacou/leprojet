@@ -3,9 +3,39 @@
 #include <string.h>
 #include <time.h>
 
-float* creermatrice()
+float** creer_matrice_2D(float** matrice, int x, int y)
 {
-  return 0;
+  //double** matrice[size_val][size_val];
+  // Corr lucas : double matrice[x][y];
+  //              return matrice;
+
+  int i = 0;
+  printf("on essaye de créer la matrice\n");
+  for(i = 0; i < x; i++)
+  {
+    matrice[i] = &pixel_val;
+    printf("%lf\n", &pixel_val);
+  }
+
+  int i=0;
+  double **matrice = malloc(size_val*sizeof(double*));
+  for (i=0;i<size_val;i++)
+  {
+    matrice[i] = malloc(size_val*sizeof(double));
+    matrice[i] = &pixel_val;
+    printf("%f\n", &pixel_val);
+  }
+
+  // version lucas
+  /*
+  matrice = malloc(sizeof(double*)*x);
+  int i = 0;
+  for(i = 0; i < x; i++)
+  {
+    matrice[i] = malloc(sizeof(double) * y);
+  }
+  return matrice;
+  */
 }
 
 /* FILE* fopen(const char* nomdufichier, const char* modeouverture);
@@ -68,7 +98,13 @@ int lirefichier(char* filename)
                   printf("\nla valeur de la taille est %d !\n", size_val);
 
                   /*on cree la matrice ici ?*/
-                  int matrice[size_val][size_val];
+                  //matrice = creer_matrice_2D(matrice, size_val, size_val);
+
+                  //version lucas
+                  /*
+                  float** matrice;
+                  matrice = creer_matrice_2D(matrice, size_val, size_val);
+                  */
                 }
               }
               else
@@ -114,6 +150,9 @@ int main(int argc, char *argv[])
 {
   char* filename = "/home/mint/leprojet/test.txt";
   lirefichier(filename);
+  //int size_val;
+  //size_val = 560;
+  //creer_matrice_2D(size_val, size_val);
 
   return 0;
 }
