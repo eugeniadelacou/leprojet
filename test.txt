@@ -1,11 +1,8 @@
 [Header Section]
 data=trucmuche
-ImageResolution=560x560
+ImageResolution=3x3
 
 [Data Section]
-7.36e13 7.3625e14
-
-git status
-git add
-git commit
-git push
+1.364e13 2.3625e13 3.757e13
+4.648e13 5.561e13 6.453e13
+7.457e13 8.250e14 9.234e13

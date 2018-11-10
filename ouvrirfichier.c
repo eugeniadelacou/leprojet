@@ -122,26 +122,29 @@ int lirefichier(char* filename)
         printf("Bienvenue dans le monde de la Data Section\n");
 
         matrice = creer_matrice_2D(matrice, size_val, size_val);
-        fgets(ligneactuelle, 50, fichier);
-        strcpy(ligneactuelle_copie, ligneactuelle);
-        pixel = strtok(ligneactuelle_copie, " ");
-        do
-        {
-          pixel_val = atof(pixel);
-          printf("pixel_val vaut %f !\n", pixel_val);
-          for (int i = 0; i < size_val; i++)
-          {
 
-            for (int j = 0; j < size_val; j++)
-            {
-              matrice[i][j] = pixel_val;
-              printf("%f ", matrice[i][j]);
-            }
-            printf("\n");
+        for (int i = 0; i < size_val;i++)
+        {
+          fgets(ligneactuelle, 50, fichier);
+          strcpy(ligneactuelle_copie, ligneactuelle);
+          //printf("%s\n", ligneactuelle);
+
+          pixel = strtok(ligneactuelle_copie, " ");
+          pixel_val = atof(pixel);
+          //printf("pixel_val vaut %f !\n", pixel_val);
+          matrice[i][0] = pixel_val;
+          printf("%f ", matrice[i][0]);
+          for (int j = 1; j < size_val; j++)
+          {
+            pixel = strtok(NULL, " ");
+            pixel_val = atof(pixel);
+            matrice[i][j] = pixel_val;
+            printf("%f ", matrice[i][j]);
+            //printf("pixel_val vaut %f !\n", pixel_val);
           }
-              pixel = strtok(NULL, " ");
+          printf("\n");
         }
-        while(pixel != NULL);
+
       }
     }
 
