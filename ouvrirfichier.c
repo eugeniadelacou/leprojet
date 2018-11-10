@@ -3,28 +3,27 @@
 #include <string.h>
 #include <time.h>
 
-float** creer_matrice_2D(float** matrice, int x, int y)
+double** creer_matrice_2D(double** matrice, int x, int y)
 {
   //double** matrice[size_val][size_val];
   // Corr lucas : double matrice[x][y];
   //              return matrice;
 
   int i = 0;
+//  int j = 0;
   printf("on essaye de créer la matrice\n");
+  matrice = malloc(sizeof(double*)*x);
   for(i = 0; i < x; i++)
   {
-    matrice[i] = &pixel_val;
-    printf("%lf\n", &pixel_val);
+    matrice[i] = malloc(sizeof(double)*y);
+/*    for(j=0; j < y; j++)
+    {
+      printf("%lf ", matrice[i][j]);
+    }
+    printf("\n "); */
   }
-
-  int i=0;
-  double **matrice = malloc(size_val*sizeof(double*));
-  for (i=0;i<size_val;i++)
-  {
-    matrice[i] = malloc(size_val*sizeof(double));
-    matrice[i] = &pixel_val;
-    printf("%f\n", &pixel_val);
-  }
+return matrice;
+}
 
   // version lucas
   /*
@@ -35,8 +34,8 @@ float** creer_matrice_2D(float** matrice, int x, int y)
     matrice[i] = malloc(sizeof(double) * y);
   }
   return matrice;
-  */
-}
+
+}*/
 
 /* FILE* fopen(const char* nomdufichier, const char* modeouverture);
    int fclose(FILE* pointeursurfichier);
@@ -51,7 +50,7 @@ int lirefichier(char* filename)
   char* flag2 = 0;
   char* size = 0;
   int size_val = 0;
-  int matrice[150];
+  double** matrice;
   char* pixel =0;
   double pixel_val=0;
 
@@ -93,18 +92,19 @@ int lirefichier(char* filename)
                 if (!strcmp (size, "ImageResolution"))
                 {
                   size = strtok(NULL, "=x");
-                  printf("%s\n", size);
+//                  printf("%s\n", size);
                   size_val = atoi(size);
                   printf("\nla valeur de la taille est %d !\n", size_val);
-
-                  /*on cree la matrice ici ?*/
-                  //matrice = creer_matrice_2D(matrice, size_val, size_val);
-
-                  //version lucas
-                  /*
-                  float** matrice;
+                  double** matrice;
                   matrice = creer_matrice_2D(matrice, size_val, size_val);
-                  */
+                  for (int i = 0; i < size_val; i++)
+                  {
+                    for (int j = 0; j < size_val; j++)
+                    {
+                      printf("%f ", matrice[i][j]);
+                    }
+                    printf("\n");
+                  }
                 }
               }
               else
@@ -121,6 +121,7 @@ int lirefichier(char* filename)
       {
         printf("Bienvenue dans le monde de la Data Section\n");
 
+        matrice = creer_matrice_2D(matrice, size_val, size_val);
         fgets(ligneactuelle, 50, fichier);
         strcpy(ligneactuelle_copie, ligneactuelle);
         pixel = strtok(ligneactuelle_copie, " ");
@@ -128,7 +129,17 @@ int lirefichier(char* filename)
         {
           pixel_val = atof(pixel);
           printf("pixel_val vaut %f !\n", pixel_val);
-          pixel = strtok(NULL, " ");
+          for (int i = 0; i < size_val; i++)
+          {
+
+            for (int j = 0; j < size_val; j++)
+            {
+              matrice[i][j] = pixel_val;
+              printf("%f ", matrice[i][j]);
+            }
+            printf("\n");
+          }
+              pixel = strtok(NULL, " ");
         }
         while(pixel != NULL);
       }
