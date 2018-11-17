@@ -16,7 +16,6 @@ double** creer_matrice_2D(double** matrice, int x, int y)
 return matrice;
 }
 
-//int extract_size(char* filename)
 int extract_size(FILE* fichier)
 /* cette fonction récupère dans le fichier texte la taille nécessaire pour la
 matrice */
@@ -108,22 +107,22 @@ int lirefichier(char* filename)
           a à droite de la délimitation à l'aide de NULL */
           pixel_val = atof(pixel);
           matrice[i][0] = pixel_val;
+          printf("matrice [%d][0] = %f\n", i, pixel_val);
           /* cf avant : on donne une instruction particulière qui ne tient pas
           compte de j pour attribuer la 1ère colonne (j=0) */
           //printf("%f ", matrice[i][0]);
           for (int j = 1; j < size_val; j++)
           /* boucle de lecture de chaque colonne : attention j commence à 1 */
           {
-
             pixel = strtok(NULL, "\t");
-            printf("%s\n", pixel );
-            break;
+          //  printf("%s\t", pixel);
+          //  break;
             pixel_val = atof(pixel);
 
             matrice[i][j] = pixel_val;
-            //printf("%f ", matrice[i][j]);
+            printf("%f\t", matrice[i][j]);
           }
-          break;
+        //  break;
           printf("\n");
           /* à chaque nouvelle itération de i, on passe une ligne pour bien
           afficher la matrice en 2D */
