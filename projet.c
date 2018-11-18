@@ -42,7 +42,7 @@ matrice */
       {
         size = strtok(NULL, "x");
         /* en faisant strtok avec NULL, on garde cette fois ce qu'il y a à
-        droite de la délimitation */
+        droite de la délimitation x */
         size_val = atoi(size);
       }
     }
@@ -51,12 +51,58 @@ matrice */
   return size_val;
 }
 
+double** remplir_matrice(FILE* fichier, double** matrice, int size_val)
+{
+  int step = 15*size_val;
+  /* on va lire combien de caractères ? si chaque pixel fait 11
+  caractères environ, on prend 15*size_val (taille de la matrice) pour
+  être sûr */
+  char ligneactuelle_data[step];
+  char ligneactuelle_copie_data[step];
+  char* pixel =0;
+  double pixel_val=0;
+
+  fgets(ligneactuelle_data, step, fichier);
+  //  for (int i = 0; i < size_val; i++)
+  for (int i = 0; i < 2; i++)
+  /* boucle de lecture de chaque ligne */
+  {
+    fgets(ligneactuelle_data, step, fichier);
+    strcpy(ligneactuelle_copie_data, ligneactuelle_data);
+    /* clone de lignactuelle_data que l'on modifiera avec strtok */
+    pixel = strtok(ligneactuelle_copie_data, "\t");
+    /* strtok garde ce qu'il y a à gauche de la délimitation (tab, \t).
+    Le pixel de la 1ère colonne est donc un peu particulier : il ne doit
+    pas entrer dans la boucle for j, qui parcourt les colonnes en gardant
+    ce qu'il y a à droite de la délimitation à l'aide de NULL */
+    pixel_val = atof(pixel);
+    matrice[i][0] = pixel_val;
+  //  printf("matrice [%d][0] = %f\n", i, pixel_val);
+    for (int j = 1; j < 2; j++)
+    /* boucle de lecture de chaque colonne : attention j commence à 1 */
+//    for (int j = 1; j < size_val; j++)
+    {
+      pixel = strtok(NULL, "\t");
+      //  break;
+      pixel_val = atof(pixel);
+      matrice[i][j] = pixel_val;
+//    printf("test remplir_matrice, matrice [%d][%d] = %lf\n", i, j, matrice [i][j]);
+//  printf("%f\t", matrice[i][j]);
+//  break;
+    }
+//    printf("\n");
+    /* à chaque nouvelle itération de i, on passe une ligne pour bien
+    afficher la matrice en 2D */
+  }
+  return matrice;
+}
+
 int lirefichier(char* filename)
 
 /* et si la valeur de retour n'était pas un int mais un pointeur vers le tableau
  ? ou alors on fait une fonction séparée remplir_matrice qui renvoie un pointeur
- sur la matrice remplie ? en fait c'est pour qu'on ait les coordonnées de dispo
- pour créer le fichier stl*/
+ sur la matrice remplie ? Lucas dit que c'est une bonne idée de commencer par ça.
+ C'est pour qu'on ait les coordonnées de dispo pour créer le fichier stl. */
 
 {
   FILE* fichier = NULL;
@@ -84,7 +130,6 @@ int lirefichier(char* filename)
 
       if (!strcmp (ligneactuelle, "[Header Section]\r\n"))
       {
-        //printf("%s\n", ligneactuelle);
         size_val = extract_size(fichier);
         printf("\nla valeur de la taille est %d !\n", size_val);
       }
@@ -98,50 +143,9 @@ int lirefichier(char* filename)
       {
         printf("Bienvenue dans le monde de la Data Section\n");
         printf("on essaye de créer la matrice\n");
-        int step = 15*size_val;
-        /* on va lire combien de caractères ? si chaque pixel fait 11
-        caractères environ, on prend 15*size_val (taille de la matrice) pour
-        être sûr */
-        char ligneactuelle_data[step];
-        char ligneactuelle_copie_data[step];
+
         matrice = creer_matrice_2D(matrice, size_val, size_val);
-        fgets(ligneactuelle_data, step, fichier);
-
-      //  for (int i = 0; i < size_val; i++)
-        for (int i = 0; i < 2; i++)
-        /* boucle de lecture de chaque ligne */
-        {
-          fgets(ligneactuelle_data, step, fichier);
-          strcpy(ligneactuelle_copie_data, ligneactuelle_data);
-          /* clone de lignactuelle_data que l'on modifiera avec strtok */
-          pixel = strtok(ligneactuelle_copie_data, "\t");
-          /* strtok garde ce qu'il y a à gauche de la délimitation (tab, \t).
-          Le pixel de la 1ère colonne est donc un peu particulier : il ne doit
-          pas entrer dans la boucle for j, qui parcourt les colonnes en gardant
-          ce qu'il y a à droite de la délimitation à l'aide de NULL */
-          pixel_val = atof(pixel);
-          matrice[i][0] = pixel_val;
-        //  printf("matrice [%d][0] = %f\n", i, pixel_val);
-          /* cf avant : on donne une instruction particulière qui ne tient pas
-          compte de j pour attribuer la 1ère colonne (j=0) */
-          //printf("%f ", matrice[i][0]);
-      //    for (int j = 1; j < size_val; j++)
-          for (int j = 1; j < 2; j++)
-          /* boucle de lecture de chaque colonne : attention j commence à 1 */
-          {
-            pixel = strtok(NULL, "\t");
-          //  printf("%s\t", pixel);
-          //  break;
-            pixel_val = atof(pixel);
-
-            matrice[i][j] = pixel_val;
-          //  printf("%f\t", matrice[i][j]);
-          }
-        //  break;
-      //    printf("\n");
-          /* à chaque nouvelle itération de i, on passe une ligne pour bien
-          afficher la matrice en 2D */
-        }
+        matrice = remplir_matrice(fichier, matrice, size_val);
       }
     }
     while (flag != NULL);
@@ -172,6 +176,8 @@ int creer_fichier_stl(char* fichierstl)
     fputs("solid lasurface\n", fichier);
     fputs("facet normal 0 1 0\n", fichier);
     fputs("\touter loop\n", fichier);
+    /* idéalement le prochain fputs serait compris dans une boucle qui parcourt
+    la matrice */
     fputs("\t \tvertex \n", fichier);
     fclose(fichier);
   }
@@ -184,6 +190,9 @@ int main(int argc, char *argv[])
   lirefichier(filename);
   char* fichierstl = "/home/mint/leprojet/fichierstl.stl";
   creer_fichier_stl(fichierstl);
+  /* dans tous les cas il faut un pointeur vers la matrice. on va peut-être
+  commencer par coder lirefichier pour qu'il renvoie un tel pointeur. ensuite on
+  l'appelle dans le main, puis on qppelle creer_fichier_stl dans le main */
 
   return 0;
 }
