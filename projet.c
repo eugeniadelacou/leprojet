@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 
+int size_val = 0;
+
 double** creer_matrice_2D(double** matrice, int x, int y)
 {
   int i = 0;
@@ -23,7 +25,6 @@ matrice */
   char ligneactuelle[150];
   char ligneactuelle_copie[150];
   char* size = 0;
-  int size_val = 0;
 
   do
   /* on s'arrête à la fin de la ligne (Image Resolution) qui  est codée par
@@ -42,39 +43,38 @@ matrice */
       {
         size = strtok(NULL, "x");
         /* en faisant strtok avec NULL, on garde cette fois ce qu'il y a à
-        droite de la délimitation x */
+        droite de la délimitation, x */
         size_val = atoi(size);
       }
     }
   }
   while(strcmp (ligneactuelle, "\r\n"));
-  return size_val;
+  return 0;
 }
 
-double** remplir_matrice(FILE* fichier, double** matrice, int size_val)
+double** remplir_matrice(FILE* fichier, double** matrice)
 {
   int step = 15*size_val;
-  /* on va lire combien de caractères ? si chaque pixel fait 11
-  caractères environ, on prend 15*size_val (taille de la matrice) pour
-  être sûr */
+  /* on va lire combien de caractères ? si chaque pixel fait 11 caractères
+  environ, on prend 15*size_val (taille de la matrice) pour être sûr */
   char ligneactuelle_data[step];
   char ligneactuelle_copie_data[step];
-  char* pixel =0;
-  double pixel_val=0;
+  char* pixel = 0;
+  double pixel_val = 0;
 
   fgets(ligneactuelle_data, step, fichier);
   //  for (int i = 0; i < size_val; i++)
   for (int i = 0; i < 2; i++)
-  /* boucle de lecture de chaque ligne */
+  /* boucle de lecture de chaque ligne de pixels */
   {
     fgets(ligneactuelle_data, step, fichier);
     strcpy(ligneactuelle_copie_data, ligneactuelle_data);
     /* clone de lignactuelle_data que l'on modifiera avec strtok */
     pixel = strtok(ligneactuelle_copie_data, "\t");
     /* strtok garde ce qu'il y a à gauche de la délimitation (tab, \t).
-    Le pixel de la 1ère colonne est donc un peu particulier : il ne doit
-    pas entrer dans la boucle for j, qui parcourt les colonnes en gardant
-    ce qu'il y a à droite de la délimitation à l'aide de NULL */
+    Le pixel de la 1ère colonne est donc un peu particulier : il ne doit pas
+    entrer dans la boucle for j, qui parcourt les colonnes en gardant ce qu'il y
+    a à droite de la délimitation à l'aide de NULL */
     pixel_val = atof(pixel);
     matrice[i][0] = pixel_val;
   //  printf("matrice [%d][0] = %f\n", i, pixel_val);
@@ -83,12 +83,8 @@ double** remplir_matrice(FILE* fichier, double** matrice, int size_val)
 //    for (int j = 1; j < size_val; j++)
     {
       pixel = strtok(NULL, "\t");
-      //  break;
       pixel_val = atof(pixel);
       matrice[i][j] = pixel_val;
-//    printf("test remplir_matrice, matrice [%d][%d] = %lf\n", i, j, matrice [i][j]);
-//  printf("%f\t", matrice[i][j]);
-//  break;
     }
 //    printf("\n");
     /* à chaque nouvelle itération de i, on passe une ligne pour bien
@@ -97,7 +93,7 @@ double** remplir_matrice(FILE* fichier, double** matrice, int size_val)
   return matrice;
 }
 
-int lirefichier(char* filename)
+double** lirefichier(char* filename)
 
 /* et si la valeur de retour n'était pas un int mais un pointeur vers le tableau
  ? ou alors on fait une fonction séparée remplir_matrice qui renvoie un pointeur
@@ -111,7 +107,6 @@ int lirefichier(char* filename)
   char* flag = 0;
 
   char* size = 0;
-  int size_val = 0;
   double** matrice;
   char* pixel =0;
   double pixel_val=0;
@@ -130,7 +125,7 @@ int lirefichier(char* filename)
 
       if (!strcmp (ligneactuelle, "[Header Section]\r\n"))
       {
-        size_val = extract_size(fichier);
+        extract_size(fichier);
         printf("\nla valeur de la taille est %d !\n", size_val);
       }
     /*  else
@@ -145,18 +140,10 @@ int lirefichier(char* filename)
         printf("on essaye de créer la matrice\n");
 
         matrice = creer_matrice_2D(matrice, size_val, size_val);
-        matrice = remplir_matrice(fichier, matrice, size_val);
+        matrice = remplir_matrice(fichier, matrice);
       }
     }
     while (flag != NULL);
-
-    for (int i = 0; i < 2; i++)
-    {
-      for (int j = 0; j < 2; j++)
-      {
-        printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      }
-    }
     fclose(fichier);
   }
   else
@@ -165,21 +152,55 @@ int lirefichier(char* filename)
   printf("Impossible d'ouvrir le fichier test.txt/n");
   fclose(fichier);
   }
+  return matrice;
 }
 
-int creer_fichier_stl(char* fichierstl)
+/**/
+
+int creer_fichier_stl(char* fichierstl, double** matrice)
 {
   FILE* fichier = NULL;
   fichier = fopen(fichierstl, "w");
   if (fichier != NULL)
   {
     fputs("solid lasurface\n", fichier);
-    fputs("facet normal 0 1 0\n", fichier);
-    fputs("\touter loop\n", fichier);
-    /* idéalement le prochain fputs serait compris dans une boucle qui parcourt
-    la matrice */
-    fputs("\t \tvertex \n", fichier);
+    for (int i = 0; i < size_val-1; i++)
+    /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
+    donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
+    {
+      for (int j = 0; j < size_val-1; j++)
+      {
+        fputs("facet normal 0 1 0\n", fichier);
+
+        /* en réalité c'est plus compliqué, il faut les coordonnées de la
+        normale, mais on verra ça plus tard */
+
+        fputs("\touter loop\n", fichier);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i, j, matrice[i][j]);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i+1, j, matrice[i+1][j]);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i, j+1, matrice[i][j+1]);
+        printf("X = %d %d z %f\n", i, j, matrice[i][j]);
+        fputs("\tendloop\n", fichier);
+        fputs("endfacet\n", fichier);
+        fputs("facet normal 0 1 0\n", fichier);
+        fputs("\touter loop\n", fichier);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i+1, j, matrice[i+1][j]);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i, j+1, matrice[i][j+1]);
+        fprintf(fichier, "\t \tvertex %d %d %f\n", i+1, j+1, matrice[i+1][j+1]);
+        printf("X = %d %d z %f\n", i, j, matrice[i][j]);
+        fputs("\tendloop\n", fichier);
+        fputs("endfacet\n", fichier);
+
+/* on pourrait faire une fonction qui code juste pour ces histoires de fputs ?*/
+
+      }
+    }
+    fputs("endsolid lasurface\n", fichier);
     fclose(fichier);
+  }
+  else
+  {
+    printf("probleme a l'ecriture du fichier stl\n");
   }
   return 0;
 }
@@ -187,12 +208,8 @@ int creer_fichier_stl(char* fichierstl)
 int main(int argc, char *argv[])
 {
   char* filename = "/home/mint/leprojet/fichier.txt";
-  lirefichier(filename);
+  double** matrice = lirefichier(filename);
   char* fichierstl = "/home/mint/leprojet/fichierstl.stl";
-  creer_fichier_stl(fichierstl);
-  /* dans tous les cas il faut un pointeur vers la matrice. on va peut-être
-  commencer par coder lirefichier pour qu'il renvoie un tel pointeur. ensuite on
-  l'appelle dans le main, puis on qppelle creer_fichier_stl dans le main */
-
+  creer_fichier_stl(fichierstl, matrice);
   return 0;
 }
