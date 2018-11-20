@@ -107,12 +107,6 @@ double** remplir_matrice(FILE* fichier, double** matrice)
 }
 
 double** lirefichier(char* filename)
-
-/* et si la valeur de retour n'était pas un int mais un pointeur vers le tableau
- ? ou alors on fait une fonction séparée remplir_matrice qui renvoie un pointeur
- sur la matrice remplie ? Lucas dit que c'est une bonne idée de commencer par ça.
- C'est pour qu'on ait les coordonnées de dispo pour créer le fichier stl. */
-
 {
   FILE* fichier = NULL;
   char ligneactuelle[150];
@@ -170,7 +164,44 @@ double** lirefichier(char* filename)
   return matrice;
 }
 
-/**/
+FILE* remplir_coordonnees_stl(double** matrice, FILE*fichier)
+{
+  for (int i = 0; i < image_resolution-1; i++)
+  {
+    /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
+    donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
+    for (int j = 0; j < image_resolution-1; j++)
+    {
+      fputs("facet normal 0 1 0\n", fichier);
+
+      /* en réalité c'est plus compliqué, il faut les coordonnées de la
+      normale, mais on verra ça plus tard */
+
+      fputs("\touter loop\n", fichier);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
+      j*espace_pixels, matrice[i][j]);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
+      j*espace_pixels, matrice[i+1][j]);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
+      (j+1)*espace_pixels, matrice[i][j+1]);
+      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
+      fputs("\tendloop\n", fichier);
+      fputs("endfacet\n", fichier);
+      fputs("facet normal 0 1 0\n", fichier);
+      fputs("\touter loop\n", fichier);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
+      j*espace_pixels, matrice[i+1][j]);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
+      (j+1)*espace_pixels, matrice[i][j+1]);
+      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
+      (j+1)*espace_pixels, matrice[i+1][j+1]);
+      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
+      fputs("\tendloop\n", fichier);
+      fputs("endfacet\n", fichier);
+    }
+  }
+  return fichier;
+}
 
 int creer_fichier_stl(char* fichierstl, double** matrice)
 {
@@ -180,37 +211,7 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
   if (fichier != NULL)
   {
     fputs("solid lasurface\n", fichier);
-    for (int i = 0; i < image_resolution-1; i++)
-    /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
-    donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
-    {
-      for (int j = 0; j < image_resolution-1; j++)
-      {
-        fputs("facet normal 0 1 0\n", fichier);
-
-        /* en réalité c'est plus compliqué, il faut les coordonnées de la
-        normale, mais on verra ça plus tard */
-
-        fputs("\touter loop\n", fichier);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels, j*espace_pixels, matrice[i][j]);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels, j*espace_pixels, matrice[i+1][j]);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]);
-        //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-        fputs("\tendloop\n", fichier);
-        fputs("endfacet\n", fichier);
-        fputs("facet normal 0 1 0\n", fichier);
-        fputs("\touter loop\n", fichier);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels, j*espace_pixels, matrice[i+1][j]);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]);
-        fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels, (j+1)*espace_pixels, matrice[i+1][j+1]);
-        //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-        fputs("\tendloop\n", fichier);
-        fputs("endfacet\n", fichier);
-
-/* on pourrait faire une fonction qui code juste pour ces histoires de fputs ?*/
-
-      }
-    }
+    remplir_coordonnees_stl(matrice, fichier);
     fputs("endsolid lasurface\n", fichier);
     fclose(fichier);
   }
