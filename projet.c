@@ -164,132 +164,21 @@ double** lirefichier(char* filename)
   return matrice;
 }
 
-FILE* remplir_coordonnees_stl(double** matrice, FILE*fichier)
+FILE* remplir_coordonnees_stl(double** matrice, FILE*fichier, double i, double j,
+double k, double l, double m, double n, double o, double p, double q)
 {
-  for (int i = 0; i < image_resolution-1; i++)
-  {
-    /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
-    donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
-    for (int j = 0; j < image_resolution-1; j++)
-    {
-      fputs("facet normal 0 1 0\n", fichier);
+  fputs("facet normal 0 1 0\n", fichier);
 
-      /* en réalité c'est plus compliqué, il faut les coordonnées de la
-      normale, mais on verra ça plus tard */
+  /* en réalité c'est plus compliqué, il faut les coordonnées de la
+  normale, mais on verra ça plus tard */
 
-      fputs("\touter loop\n", fichier);
-
-      /* triangles du haut */
-
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle complémentaire, toujours en haut */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      (j+1)*espace_pixels, matrice[i+1][j+1]);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle du bas */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle complémentaire, du bas */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      (j+1)*espace_pixels, matrice[i+1][j+1]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle intermédiaire entre haut et bas : AA'C' */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle intermédiaire entre haut et bas : ACC' */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      (j+1)*espace_pixels, matrice[i][j+1]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle intermédiaire entre haut et bas : ABB' */
-
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-
-      /* triangle intermédiaire entre haut et bas : AA'B' */
-      
-      fputs("facet normal 0 1 0\n", fichier);
-      fputs("\touter loop\n", fichier);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", i*espace_pixels,
-      j*espace_pixels, matrice[i][j]-1);
-      fprintf(fichier, "\t \tvertex %f %f %f\n", (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j]-1);
-      //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
-      fputs("\tendloop\n", fichier);
-      fputs("endfacet\n", fichier);
-    }
-  }
+  fputs("\touter loop\n", fichier);
+  fprintf(fichier, "\t \tvertex %f %f %f\n", i, j, k);
+  fprintf(fichier, "\t \tvertex %f %f %f\n", l, m, n);
+  fprintf(fichier, "\t \tvertex %f %f %f\n", o, p, q);
+  //printf("X = %d %d z %f\n", i, j, matrice[i][j]);
+  fputs("\tendloop\n", fichier);
+  fputs("endfacet\n", fichier);
   return fichier;
 }
 
@@ -301,8 +190,50 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
   if (fichier != NULL)
   {
     fputs("solid lasurface\n", fichier);
-    remplir_coordonnees_stl(matrice, fichier);
-//    remplir_coordonnees_stl(matrice, fichier, 1);
+    for (int i = 0; i < image_resolution-1; i++)
+    {
+      /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
+      donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
+      for (int j = 0; j < image_resolution-1; j++)
+      {
+        // triangles du haut
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j], i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]);
+        remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+        j*espace_pixels, matrice[i+1][j], i*espace_pixels,(j+1)*espace_pixels,
+        matrice[i][j+1], (i+1)*espace_pixels, (j+1)*espace_pixels,
+        matrice[i+1][j+1]);
+
+        // triangles du bas
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j]-1, (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j]-1, i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1]-1);
+        remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+        j*espace_pixels, matrice[i+1][j]-1, i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1]-1, (i+1)*espace_pixels, (j+1)*espace_pixels,
+        matrice[i+1][j+1]-1);
+
+        // triangles intermédiaires
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j], i*espace_pixels, j*espace_pixels,
+        matrice[i][j]-1, i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1]-1);
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j], i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1], i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1]-1);
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j]-1);
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        j*espace_pixels, matrice[i][j], i*espace_pixels, j*espace_pixels,
+        matrice[i][j]-1, (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j]-1);
+      }
+    }
     fputs("endsolid lasurface\n", fichier);
     fclose(fichier);
   }
