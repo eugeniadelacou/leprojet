@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <math.h>
 
 int image_resolution = 0;
@@ -77,7 +76,6 @@ double** remplir_matrice(FILE* fichier, double** matrice)
   double pixel_val = 0;
 
   fgets(ligneactuelle_data, step, fichier);
-  //  for (int i = 0; i < image_resolution; i++)
   for (int i = 0; i < image_resolution; i++)
   /* boucle de lecture de chaque ligne de pixels */
   {
@@ -94,7 +92,6 @@ double** remplir_matrice(FILE* fichier, double** matrice)
   //  printf("matrice [%d][0] = %f\n", i, pixel_val);
     for (int j = 1; j < image_resolution; j++)
     /* boucle de lecture de chaque colonne : attention j commence à 1 */
-//    for (int j = 1; j < image_resolution; j++)
     {
       pixel = strtok(NULL, "\t");
       pixel_val = atof(pixel);
@@ -203,6 +200,7 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
 {
   FILE* fichier = NULL;
   fichier = fopen(fichierstl, "w");
+  double ecart = 0.3;
 
   if (fichier != NULL)
   {
@@ -217,7 +215,7 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
 //for (int j = 0; j < 2; j++)
 
       {
-        // triangles du haut
+        /* triangles du haut */
         remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
         j*espace_pixels, matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
         matrice[i+1][j], i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]);
@@ -226,29 +224,33 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
         j*espace_pixels, matrice[i+1][j], i*espace_pixels,(j+1)*espace_pixels,
         matrice[i][j+1]);
 
-        // triangles du bas
+        /* triangles du bas */
         remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
-        j*espace_pixels, matrice[i][j]-1, (i+1)*espace_pixels, j*espace_pixels,
-        matrice[i+1][j]-1, i*espace_pixels, (j+1)*espace_pixels,
-        matrice[i][j+1]-1);
+        j*espace_pixels, matrice[0][0]-ecart, (i+1)*espace_pixels,
+        j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
         remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
-        (j+1)*espace_pixels, matrice[i+1][j+1]-1, (i+1)*espace_pixels,
-        j*espace_pixels, matrice[i+1][j]-1, i*espace_pixels, (j+1)*espace_pixels,
-        matrice[i][j+1]-1);
+        (j+1)*espace_pixels, matrice[0][0]-ecart, (i+1)*espace_pixels,
+        j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
 
-        // triangles intermédiaires
+        /* triangles intermédiaires */
         remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
-        j*espace_pixels, matrice[i][j]-1, i*espace_pixels, j*espace_pixels,
-        matrice[i][j], i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]-1);
+        j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
+        matrice[i][j], i*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
         remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
-        (j+1)*espace_pixels, matrice[i][j+1],i*espace_pixels, j*espace_pixels,
-        matrice[i][j], i*espace_pixels, (j+1)*espace_pixels, matrice[i][j+1]-1);
+        (j+1)*espace_pixels, matrice[i][j+1], i*espace_pixels, j*espace_pixels,
+        matrice[i][j], i*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
         remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
         j*espace_pixels, matrice[i+1][j], i*espace_pixels, j*espace_pixels,
-        matrice[i][j], (i+1)*espace_pixels, j*espace_pixels, matrice[i+1][j]-1);
+        matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[0][0]-ecart);
         remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
-        j*espace_pixels, matrice[i][j]-1, i*espace_pixels, j*espace_pixels,
-        matrice[i][j], (i+1)*espace_pixels, j*espace_pixels, matrice[i+1][j]-1);
+        j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
+        matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[0][0]-ecart);
       }
     }
     fputs("endsolid lasurface\n", fichier);
@@ -263,9 +265,11 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
 
 int main(int argc, char *argv[])
 {
-  char* filename = "/home/mint/leprojet/fichier.txt";
+//  char* filename = "/home/mint/leprojet/fichier.txt";
+  char* filename = "./fichier.txt";
   double** matrice = lirefichier(filename);
-  char* fichierstl = "/home/mint/leprojet/fichierstl.stl";
+//  char* fichierstl = "/home/mint/leprojet/fichierstl.stl";
+  char* fichierstl = "./fichierstl.stl";
   creer_fichier_stl(fichierstl, matrice);
   return 0;
 }
