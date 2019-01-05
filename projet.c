@@ -251,6 +251,23 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
         j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
         matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
         matrice[0][0]-ecart);
+
+        remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+        j*espace_pixels, matrice[0][0]-ecart, (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j], (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
+        remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[i+1][j+1], (i+1)*espace_pixels, j*espace_pixels,
+        matrice[i+1][j], (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
+        remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[i+1][j+1], i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1], (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
+        remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, (j+1)*espace_pixels,
+        matrice[i][j+1], (i+1)*espace_pixels,
+        (j+1)*espace_pixels, matrice[0][0]-ecart);
       }
     }
     fputs("endsolid lasurface\n", fichier);
