@@ -46,7 +46,7 @@ matrice, càd le nombre de pixels (image_resolution), et la taille de l'image
         identiques. on veut donc "non strcmp" puisque "false" = 0 */
         size = strtok(NULL, " ");
         /* en faisant strtok avec NULL, on garde cette fois ce qu'il y a à
-        droite de la délimitation, x */
+        droite de la délimitation */
         image_size = atoi(size);
         printf("image_size = %d\n", image_size);
       }
@@ -206,13 +206,13 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
   {
     fputs("solid lasurface\n", fichier);
     for (int i = 0; i < image_resolution-1; i++)
-//for (int i = 0; i < 3; i++)
+    //for (int i = 0; i < 3; i++)
 
     {
       /* on risque d'avoir des problèmes avec les dernières lignes et colonnes,
       donc pour éviter ça, on va s'arrêter à une case avant la fin de matrice */
       for (int j = 0; j < image_resolution-1; j++)
-//for (int j = 0; j < 3; j++)
+      //for (int j = 0; j < 3; j++)
 
       {
         /* triangles du haut */
@@ -289,6 +289,7 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
         (j+1)*espace_pixels, matrice[0][0]-ecart);*/
       }
     }
+//    for (int i = 0; i < 3; i++)
 
     for (int i = 0; i < image_resolution-1; i++)
     {
@@ -301,7 +302,21 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
       j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
       matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
       matrice[0][0]-ecart);
+
+      j = image_resolution-1;
+    //int j = 2;
+      remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
+      j*espace_pixels, matrice[i+1][j], i*espace_pixels, j*espace_pixels,
+      matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+      matrice[0][0]-ecart);
+      remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
+      j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
+      matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
+      matrice[0][0]-ecart);
     }
+
+
+  //  for (int j = 0; j < 3; j++)
 
     for (int j = 0; j < image_resolution-1; j++)
     {
@@ -314,24 +329,9 @@ int creer_fichier_stl(char* fichierstl, double** matrice)
       (j+1)*espace_pixels, matrice[i][j+1], i*espace_pixels, j*espace_pixels,
       matrice[i][j], i*espace_pixels,
       (j+1)*espace_pixels, matrice[0][0]-ecart);
-    }
 
-    for (int i = 0; i < image_resolution-1; i++)
-    {
-      int j = image_resolution-1;
-      remplir_coordonnees_stl(matrice, fichier, (i+1)*espace_pixels,
-      j*espace_pixels, matrice[i+1][j], i*espace_pixels, j*espace_pixels,
-      matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
-      matrice[0][0]-ecart);
-      remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
-      j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
-      matrice[i][j], (i+1)*espace_pixels, j*espace_pixels,
-      matrice[0][0]-ecart);
-    }
-
-    for (int j = 0; j < image_resolution-1; j++)
-    {
-      int i = image_resolution-1;
+      i = image_resolution-1;
+    //int i = 2;
       remplir_coordonnees_stl(matrice, fichier, i*espace_pixels,
       j*espace_pixels, matrice[0][0]-ecart, i*espace_pixels, j*espace_pixels,
       matrice[i][j], i*espace_pixels,
